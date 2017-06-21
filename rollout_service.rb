@@ -8,19 +8,14 @@ module RolloutService
 
     helpers do
       def authenticate!
-        response = HTTParty.post('https://www.googleapis.com/oauth2/v3/tokeninfo',
-                                 body: {id_token: params[:id_token]})
-
-        raise 'Bad response from server' if response.code != 200
-        response_body = JSON.parse(response.body)
-
-        if $google_oauth_allowed_domain.present? && response_body['hd'] != $google_oauth_allowed_domain
-          raise 'Unauthorized user, this domain is not allowed'
+        tokens = ENV['ALLOWED_TOKENS'].split(',').map {|p| p.split(':')}.to_h
+        email = tokens[params[:id_token]]
+        unless email
+          raise 'Unauthorized user'
         end
+        name = email.split('@')[0]
 
-
-        $current_user = User.new(response_body['name'], response_body['email'])
-        raise 'Unauthorized user' if $current_user.name.blank? || $current_user.mail.blank?
+        $current_user = User.new(name, email)
 
       rescue => e
         error!('401 Unauthorized', 401)
