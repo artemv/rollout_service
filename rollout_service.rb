@@ -11,7 +11,9 @@ module RolloutService
         response = HTTParty.post('https://www.googleapis.com/oauth2/v3/tokeninfo',
                                  body: {id_token: params[:id_token]})
 
-        raise "Bad response from server: #{response.inspect}" if response.code != 200
+        if response.code != 200
+          raise "Bad response from server: #{response.inspect}"
+        end
         response_body = JSON.parse(response.body)
         puts "response_body: #{response_body.inspect}"
 
@@ -29,6 +31,7 @@ module RolloutService
         raise 'Unauthorized user' if $current_user.name.blank? || $current_user.mail.blank?
 
       rescue => e
+        puts "treating error #{e.inspect} as 401"
         error!('401 Unauthorized', 401)
       end
     end
