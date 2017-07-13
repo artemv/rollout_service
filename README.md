@@ -26,6 +26,7 @@ Edit `./config/redis.yml`
 ## How to start the service? 
 Run 
 ```
-REDIS_URL="redis://localhost:6379" ALLOWED_EMAILS="user1@gmail.com,user2@gmail.com" bundle exec rackup -p 4000
+REDIS_URL="redis://localhost:6379" ALLOWED_EMAILS="user1@gmail.com,user2@gmail.com" OAUTH_ALLOWED_DOMAIN="my.domain.com" bundle exec rackup -p 4000
 ```
 Specify proper REDIS_URL, ALLOWED_EMAILS and service port. In this example the service will listen on port 4000.
+If OAUTH_ALLOWED_DOMAIN is specified only users authorized with that domain are allowed.

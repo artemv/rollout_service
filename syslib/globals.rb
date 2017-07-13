@@ -20,7 +20,7 @@ module Globals
 
   def authentication
     config =  YAML.load(File.read('./config/authentication.yml'))[$env]
-    $google_oauth_allowed_domain = config[:google_oauth_allowed_domain]
+    $google_oauth_allowed_domain = ENV['OAUTH_ALLOWED_DOMAIN'] || config[:google_oauth_allowed_domain]
   end
 
   def setup
