@@ -21,6 +21,7 @@ module Globals
   def authentication
     config =  YAML.load(File.read('./config/authentication.yml'))[$env] || {}
     $google_oauth_allowed_domain = ENV['OAUTH_ALLOWED_DOMAIN'] || config[:google_oauth_allowed_domain]
+    $allowed_users_emails = (ENV['ALLOWED_USERS_EMAILS'] || '').split(',').map {|e| e.strip}
   end
 
   def setup

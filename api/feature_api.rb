@@ -7,9 +7,8 @@ class FeatureAPI < Grape::API
       Feature.find(feature)
     end
 
-    RestfulModels::Response.represent(data: features)
+    {data: features}
   end
-
 
   route_param :feature_name do
     params do
@@ -19,10 +18,10 @@ class FeatureAPI < Grape::API
       feature = params[:feature_name]
 
       if feature.valid?
-        RestfulModels::Response.represent(data: feature)
+        {data: feature}
       else
         status 500
-        RestfulModels::Response.represent(message: 'Error, feature is not valid')
+        {message: 'Error, feature is not valid'}
       end
     end
 
@@ -36,7 +35,7 @@ class FeatureAPI < Grape::API
 
       is_active = feature.active?(user_id)
 
-      RestfulModels::Response.represent(data: { active: is_active })
+      {data: { active: is_active }}
     end
 
     params do
@@ -47,7 +46,6 @@ class FeatureAPI < Grape::API
       authenticate!
       feature = params[:feature_name]
       feature.delete
-      ''
     end
 
     params do
@@ -75,13 +73,10 @@ class FeatureAPI < Grape::API
         feature.save!
         Feature.set_users_to_feature(feature, params[:users])
         Feature.set_groups_to_feature(feature, params[:groups])
-        RestfulModels::Response.represent(
-            message: 'Feature created successfully!',
-            data: feature
-        )
+        {message: 'Feature created successfully!', data: feature}
       rescue => e
         status 500
-        RestfulModels::Response.represent(message: "An error has been occurred.\r\n #{e}")
+        {message: "An error has been occurred.\r\n #{e}"}
       end
     end
 
@@ -99,25 +94,16 @@ class FeatureAPI < Grape::API
           created_at: Time.current
       }
 
-      # This is a temporary, will be deleted after all the features will be updated
-      if feature.author.blank?
-        options[:author] = $current_user.name
-        options[:author_mail] = $current_user.mail
-      end
-
       feature.assign_attributes(options)
 
       begin
         feature.save!
         Feature.set_users_to_feature(feature, params[:users])
         Feature.set_groups_to_feature(feature, params[:groups])
-        RestfulModels::Response.represent(
-            message: 'Feature updated successfully!',
-            data: feature
-        )
+        { message: 'Feature updated successfully!', data: feature}
       rescue => e
         status 500
-        RestfulModels::Response.represent(message: "An error has been occurred.\r\n #{e}")
+        {message: "An error has been occurred.\r\n #{e}"}
       end
     end
   end
